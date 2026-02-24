@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Post
+from .models import Post, Category
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -30,3 +30,4 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ['title', 'content']
 
 admin.site.register(Post, PostAdmin)
+admin.site.register(Category)
