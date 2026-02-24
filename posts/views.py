@@ -6,8 +6,26 @@ from django.utils.safestring import mark_safe
 
 from posts.models import Post, Category
 
-ALLOWED_TAGS = bleach.sanitizer.ALLOWED_TAGS.union({"p","pre","code","h1","h2","h3","h4","h5","h6","img"})
-ALLOWED_ATTRS = {"a": ["href", "title"], "img": ["src", "alt", "title"]}
+ALLOWED_TAGS = bleach.sanitizer.ALLOWED_TAGS.union({
+    "p", "pre", "code",
+    "h1", "h2", "h3", "h4", "h5", "h6",
+    "img",
+
+    # tables
+    "table", "thead", "tbody", "tfoot", "tr", "th", "td",
+
+    # HTML blocks used here
+    "details", "summary",
+    "kbd",
+    "sup",
+})
+
+
+ALLOWED_ATTRS = {
+    "a": ["href", "title"],
+    "img": ["src", "alt", "title"],
+    "table": ["class"],
+}
 
 # Create your views here.
 
@@ -41,6 +59,8 @@ class PostDetailView(DetailView):
         ctx = super().get_context_data(**kwargs)
         html = md.markdown(self.object.content, extensions=["fenced_code", "tables"])
         clean = bleach.clean(html, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRS, strip=True)
+        # 给 table 自动加 class
+        clean = clean.replace("<table>", '<table class="table table-striped">')
         ctx["content_html"] = mark_safe(clean)
         return ctx
 
