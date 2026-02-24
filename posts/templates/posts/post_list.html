@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>post_list</title>
+    <link rel="stylesheet" href="{% static 'posts/bootstrap.min.css' %}">
+</head>
+
+<body>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Blog List</h1>
+
+    <div class="row">
+
+        <!-- 左侧：分类 -->
+        <aside class="col-md-3">
+            <div class="list-group">
+
+                <a class="list-group-item {% if not active_category_slug %}active{% endif %}"
+                   href="{% url 'post_list' %}">
+                    All
+                </a>
+
+                {% for c in categories %}
+                    {% if not c.parent %}
+                        <a class="list-group-item {% if active_category_slug == c.slug %}active{% endif %}"
+                           href="{% url 'post_list_by_category' c.slug %}">
+                            {{ c.name }}
+                        </a>
+
+                        {% for child in c.children.all %}
+                            <a class="list-group-item ps-4 {% if active_category_slug == child.slug %}active{% endif %}"
+                               href="{% url 'post_list_by_category' child.slug %}">
+                                └ {{ child.name }}
+                            </a>
+                        {% endfor %}
+
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+        </aside>
+
+
+        <!-- 右侧：文章列表 -->
+        <main class="col-md-9">
+
+            {% for post in object_list %}
+                <div class="card mb-3">
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+
+                            <h5 class="card-title mb-0">
+                                <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none">
+                                    {{ post.title }}
+                                </a>
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+                                🕒 {{ post.created_at|date:"Y-m-d H:i" }}
+                            </p>
+
+                        </div>
+
+                        <p class="card-text text-muted mb-0">
+                            {{ post.description }}
+                        </p>
+
+                    </div>
+                </div>
+
+            {% empty %}
+                <p class="text-center text-muted">No posts yet.</p>
+            {% endfor %}
+
+        </main>
+
+    </div>
+</div>
+
+</body>
+</html>

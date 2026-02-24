@@ -1,0 +1,50 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ object.title }}</title>
+
+  <link rel="stylesheet" href="{% static 'posts/bootstrap.min.css' %}">
+</head>
+<body>
+
+<div class="container mt-5">
+
+  <article class="mx-auto" style="max-width: 800px;">
+
+    <h1 class="mb-3">{{ object.title }}</h1>
+
+    <p class="text-muted">
+      Posted on {{ object.published_at|default:object.created_at|date:"Y-m-d" }}
+      | Last updated {{ object.updated_at|date:"Y-m-d" }}
+    </p>
+
+    {% if object.category %}
+      <p class="mb-3">
+        <span class="badge text-bg-light">
+          {{ object.category.name }}
+        </span>
+      </p>
+    {% endif %}
+
+    <hr>
+
+    <!-- ✅ 用 Markdown 渲染后的安全 HTML -->
+    <div class="fs-5 lh-lg">
+      {{ content_html }}
+    </div>
+
+    <hr class="my-5">
+
+    <a href="{% url 'post_list' %}" class="btn btn-secondary">
+      ← Back to list
+    </a>
+
+  </article>
+
+</div>
+
+<script src="{% static 'posts/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
